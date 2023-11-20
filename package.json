@@ -1,6 +1,22 @@
 {
+  "name": "sim-engine",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "Shane Arney (srainier@gmail.com)",
+  "license": "MIT",
   "dependencies": {
-    "gl-matrix": "^3.4.3",
-    "typescript": "^5.2.2"
+    "gl-matrix": "^3.4.3"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   }
 }

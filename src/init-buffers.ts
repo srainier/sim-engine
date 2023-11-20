@@ -1,3 +1,5 @@
+import { Buffers } from "./types";
+
 function initPositionBuffer(gl: WebGLRenderingContext): WebGLBuffer | null {
     // Create a buffer for the square's positions.
     const positionBuffer = gl.createBuffer();
@@ -21,11 +23,11 @@ function initPositionBuffer(gl: WebGLRenderingContext): WebGLBuffer | null {
     return positionBuffer;
 }
 
-function initBuffers(gl: WebGLRenderingContext): { position: WebGLBuffer | null } {
+function initBuffers(gl: WebGLRenderingContext): Buffers | null {
     const positionBuffer = initPositionBuffer(gl);
     if (!positionBuffer) {
         alert("Couldn't initialize buffers");
-        return { position: null };
+        return null;
     }
   
     return {

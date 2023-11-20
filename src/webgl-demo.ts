@@ -1,3 +1,4 @@
+import { Buffers, ProgramInfo } from "./types";
 import { initBuffers } from "./init-buffers";
 import { drawScene } from "./draw-scene";
 import { vertexShaderSource, fragmentShaderSource } from "./shader-source";
@@ -90,7 +91,7 @@ function main(vsSource: string, fsSource: string) {
     // Collect all the info needed to use the shader program.
     // Look up which attribute our shader program is using
     // for aVertexPosition and look up uniform locations.
-    const programInfo = {
+    const programInfo: ProgramInfo = {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
@@ -106,7 +107,7 @@ function main(vsSource: string, fsSource: string) {
     const buffers = initBuffers(gl);
 
     // Draw the scene
-    drawScene(gl, programInfo, buffers);
+    drawScene(gl, buffers, programInfo);
 }
 
 main(vertexShaderSource, fragmentShaderSource);

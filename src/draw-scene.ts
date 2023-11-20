@@ -1,8 +1,9 @@
 import { mat4 } from "gl-matrix";
+import { Buffers, ProgramInfo } from "./types";
 
 // Tell WebGL how to pull out the positions from the position
 // buffer into the vertexPosition attribute.
-function setPositionAttribute(gl: WebGLRenderingContext, buffers, programInfo) {
+function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
     const numComponents = 2; // pull out 2 values per iteration
     const type = gl.FLOAT; // the data in the buffer is 32bit floats
     const normalize = false; // don't normalize
@@ -23,7 +24,7 @@ function setPositionAttribute(gl: WebGLRenderingContext, buffers, programInfo) {
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-function drawScene(gl: WebGLRenderingContext, programInfo, buffers) {
+function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
     // set the clear color to black, fully opaque
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     // set the clear depth to clear everything
