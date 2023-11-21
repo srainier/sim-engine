@@ -23,15 +23,54 @@ function initPositionBuffer(gl: WebGLRenderingContext): WebGLBuffer | null {
     return positionBuffer;
 }
 
+function initColorBuffer(gl: WebGLRenderingContext): WebGLBuffer | null {
+    const colors = [
+        1.0,
+        1.0,
+        1.0,
+        1.0, // white
+        1.0,
+        0.0,
+        0.0,
+        1.0, // red
+        0.0,
+        1.0,
+        0.0,
+        1.0, // green
+        0.0,
+        0.0,
+        1.0,
+        1.0, // blue
+    ];
+
+    const colorBuffer: WebGLBuffer = gl.createBuffer();
+    if (!colorBuffer) {
+        alert("Couldn't create buffer");
+        return null;
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    return colorBuffer;
+}
+
+
 function initBuffers(gl: WebGLRenderingContext): Buffers | null {
     const positionBuffer = initPositionBuffer(gl);
     if (!positionBuffer) {
         alert("Couldn't initialize buffers");
         return null;
     }
+
+    const colorBuffer = initColorBuffer(gl);
+    if (!colorBuffer) {
+        alert("Couldn't initialize buffers");
+        return null;
+    }
   
     return {
       position: positionBuffer,
+      color: colorBuffer,
     };
 }
 

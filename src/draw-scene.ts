@@ -24,6 +24,26 @@ function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers, progr
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
+// Tell WebGL how to pull out the colors from the color buffer
+// into the vertexColor attribute.
+function setColorAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
+    const numComponents = 4;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+    gl.vertexAttribPointer(
+      programInfo.attribLocations.vertexColor,
+      numComponents,
+      type,
+      normalize,
+      stride,
+      offset,
+    );
+    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+  }
+
 function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
     // set the clear color to black, fully opaque
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -62,6 +82,9 @@ function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: Pro
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     setPositionAttribute(gl, buffers, programInfo);
+
+    // Tell WebGL how to pull out the colors from the color buffer
+    setColorAttribute(gl, buffers, programInfo);
 
     // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
