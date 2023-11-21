@@ -60,6 +60,9 @@ function loadShader(gl: WebGLRenderingContext, type: number, source: string): We
     return shader;
 }
 
+let squareRotation = 0.0;
+let deltaTime = 0;
+
 /* main function */
 function main(vsSource: string, fsSource: string) {
     let canvas = document.getElementById("glcanvas");
@@ -107,8 +110,24 @@ function main(vsSource: string, fsSource: string) {
     // objects we'll be drawing.
     const buffers = initBuffers(gl);
 
+    // Hey, it's the render loop!
+
     // Draw the scene
-    drawScene(gl, buffers, programInfo);
+    let then: number = 0;
+
+    // draw the scene repeatedly
+    function render(now: number) {
+        now *= 0.001; // convert to seconds
+        deltaTime = now - then;
+        then = now;
+
+        drawScene(gl, buffers, programInfo, squareRotation);
+        squareRotation += deltaTime;
+
+        requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
 }
 
 main(vertexShaderSource, fragmentShaderSource);

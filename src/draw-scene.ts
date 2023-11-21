@@ -34,17 +34,17 @@ function setColorAttribute(gl: WebGLRenderingContext, buffers: Buffers, programI
     const offset = 0;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
     gl.vertexAttribPointer(
-      programInfo.attribLocations.vertexColor,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset,
+        programInfo.attribLocations.vertexColor,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset,
     );
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
-  }
+}
 
-function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
+function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo, squareRotation: number) {
     // set the clear color to black, fully opaque
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     // set the clear depth to clear everything
@@ -78,6 +78,14 @@ function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: Pro
         modelViewMatrix, // matrix to translate
         [-0.0, 0.0, -6.0], // amount to translate
     ); 
+
+    // After translating, rotate the square
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        squareRotation, // amount to rotate in radians
+        [0, 0, 1], // axis to rotate around
+    );
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
