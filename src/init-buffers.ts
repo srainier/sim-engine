@@ -1,76 +1,62 @@
-import { Buffers } from "./types";
+import { BufferLayout, Buffers } from "./types";
+import { createVertexLayout, createColorLayout, createSmallMeshLayout, createLargeMeshLayout } from "./types";
 
-function initPositionBuffer(gl: WebGLRenderingContext): WebGLBuffer | null {
-    // Create a buffer for the square's positions.
-    const positionBuffer = gl.createBuffer();
-    if (!positionBuffer) {
+// WebGL2RenderingContext ??????
+function initBuffer(gl: WebGLRenderingContext, bufferID: number, bufferData: Float32Array | Uint16Array): WebGLBuffer | null {
+    const buffer = gl.createBuffer();
+    if (!buffer) {
         alert("Couldn't create buffer");
         return null;
     }
-  
-    // Select the positionBuffer as the one to apply buffer
-    // operations to from here out.
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  
-    // Now create an array of positions for the square.
-    const positions = [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0];
-  
-    // Now pass the list of positions into WebGL to build the
-    // shape. We do this by creating a Float32Array from the
-    // JavaScript array, then use it to fill the current buffer.
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-  
-    return positionBuffer;
+
+    gl.bindBuffer(bufferID, buffer);
+    gl.bufferData(bufferID, bufferData, gl.STATIC_DRAW);
+
+    return buffer;
 }
 
-function initColorBuffer(gl: WebGLRenderingContext): WebGLBuffer | null {
-    const colors = [
-        1.0,
-        1.0,
-        1.0,
-        1.0, // white
-        1.0,
-        0.0,
-        0.0,
-        1.0, // red
-        0.0,
-        1.0,
-        0.0,
-        1.0, // green
-        0.0,
-        0.0,
-        1.0,
-        1.0, // blue
-    ];
+function initPositionBuffer(gl: WebGLRenderingContext, vertexPositions: number[]): WebGLBuffer | null {
+    return initBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(vertexPositions));
+}
 
-    const colorBuffer: WebGLBuffer = gl.createBuffer();
-    if (!colorBuffer) {
-        alert("Couldn't create buffer");
-        return null;
-    }
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+function initIndexBuffer(gl: WebGLRenderingContext, meshIndices: number[]): WebGLBuffer | null {
+    return initBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(meshIndices));
+}
 
-    return colorBuffer;
+function initColorBuffer(gl: WebGLRenderingContext, vertexColors: number[]): WebGLBuffer | null {
+    return initBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(vertexColors));
 }
 
 
-function initBuffers(gl: WebGLRenderingContext): Buffers | null {
-    const positionBuffer = initPositionBuffer(gl);
-    if (!positionBuffer) {
+function initBuffers(gl: WebGLRenderingContext,
+                     vertexPositions: number[],
+                     meshIndices: number[],
+                     vertexColors: number[] ): Buffers | null {
+    const vertexBuffer = initPositionBuffer(gl, vertexPositions);
+    if (!vertexBuffer) {
         alert("Couldn't initialize buffers");
         return null;
     }
 
-    const colorBuffer = initColorBuffer(gl);
+    const meshBuffer = initIndexBuffer(gl, meshIndices);
+    if (!meshBuffer) {
+        alert("Couldn't initialize buffers");
+        return null;
+    }
+
+    const colorBuffer = initColorBuffer(gl, vertexColors);
     if (!colorBuffer) {
         alert("Couldn't initialize buffers");
         return null;
     }
   
+    // this internalizes assumptions about the layout of the buffers, which is bad.
     return {
-      position: positionBuffer,
-      color: colorBuffer,
+      vertexBuffer: vertexBuffer,
+      vertexBufferLayout: createVertexLayout(gl),
+      meshBuffer: meshBuffer,
+      colorBuffer: colorBuffer,
+      colorBufferLayout: createColorLayout(gl),
     };
 }
 

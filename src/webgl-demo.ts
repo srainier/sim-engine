@@ -2,6 +2,7 @@ import { Buffers, ProgramInfo } from "./types";
 import { initBuffers } from "./init-buffers";
 import { drawScene } from "./draw-scene";
 import { vertexShaderSource, fragmentShaderSource } from "./shader-source";
+import { vertexPositions, meshIndices, vertexColors } from "./cube_data";
 
 // This function creates a shader of the given type, uploads the source and compiles it.
 function initShaderProgram(gl: WebGLRenderingContext, vsSource: string, fsSource: string): WebGLProgram | null {
@@ -60,7 +61,7 @@ function loadShader(gl: WebGLRenderingContext, type: number, source: string): We
     return shader;
 }
 
-let squareRotation = 0.0;
+let cubeRotation = 0.0;
 let deltaTime = 0;
 
 /* main function */
@@ -108,7 +109,7 @@ function main(vsSource: string, fsSource: string) {
 
     // Here's where we call the routine that builds all the
     // objects we'll be drawing.
-    const buffers = initBuffers(gl);
+    const buffers = initBuffers(gl, vertexPositions, meshIndices, vertexColors);
 
     // Hey, it's the render loop!
 
@@ -121,8 +122,8 @@ function main(vsSource: string, fsSource: string) {
         deltaTime = now - then;
         then = now;
 
-        drawScene(gl, buffers, programInfo, squareRotation);
-        squareRotation += deltaTime;
+        drawScene(gl, buffers, programInfo, cubeRotation);
+        cubeRotation += deltaTime;
 
         requestAnimationFrame(render);
     }

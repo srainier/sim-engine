@@ -4,22 +4,15 @@ import { Buffers, ProgramInfo } from "./types";
 // Tell WebGL how to pull out the positions from the position
 // buffer into the vertexPosition attribute.
 function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
-    const numComponents = 2; // pull out 2 values per iteration
-    const type = gl.FLOAT; // the data in the buffer is 32bit floats
-    const normalize = false; // don't normalize
-    const stride = 0; // how many bytes to get from one set of values to the next
-    // 0 = use type and numComponents above
-    const offset = 0; // how many bytes inside the buffer to start from
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertexBuffer);
 
     gl.vertexAttribPointer(
         programInfo.attribLocations.vertexPosition,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
+        buffers.vertexBufferLayout.numComponents,
+        buffers.vertexBufferLayout.type,
+        buffers.vertexBufferLayout.normalize,
+        buffers.vertexBufferLayout.stride,
+        buffers.vertexBufferLayout.offset,
     );
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
@@ -27,24 +20,24 @@ function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers, progr
 // Tell WebGL how to pull out the colors from the color buffer
 // into the vertexColor attribute.
 function setColorAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
-    const numComponents = 4;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.colorBuffer);
     gl.vertexAttribPointer(
         programInfo.attribLocations.vertexColor,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
+        buffers.colorBufferLayout.numComponents,
+        buffers.colorBufferLayout.type,
+        buffers.colorBufferLayout.normalize,
+        buffers.colorBufferLayout.stride,
+        buffers.colorBufferLayout.offset,
     );
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
 
-function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo, squareRotation: number) {
+function setMeshAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
+    // Maybe this is all that's needed for now?
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.meshBuffer);
+}
+
+function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo, cubeRotation: number) {
     // set the clear color to black, fully opaque
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     // set the clear depth to clear everything
@@ -79,17 +72,30 @@ function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: Pro
         [-0.0, 0.0, -6.0], // amount to translate
     ); 
 
-    // After translating, rotate the square
     mat4.rotate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to rotate
-        squareRotation, // amount to rotate in radians
-        [0, 0, 1], // axis to rotate around
-    );
+        cubeRotation, // amount to rotate in radians
+        [0, 0, 1],
+    ); // axis to rotate around (Z)
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        cubeRotation * 0.7, // amount to rotate in radians
+        [0, 1, 0],
+    ); // axis to rotate around (Y)
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        cubeRotation * 0.3, // amount to rotate in radians
+        [1, 0, 0],
+    ); // axis to rotate around (X)
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     setPositionAttribute(gl, buffers, programInfo);
+
+    setMeshAttribute(gl, buffers, programInfo);
 
     // Tell WebGL how to pull out the colors from the color buffer
     setColorAttribute(gl, buffers, programInfo);
@@ -114,9 +120,13 @@ function drawScene(gl: WebGLRenderingContext, buffers: Buffers, programInfo: Pro
     // This is weird, but I get it allows for the enclosing scope
     // to have consts? anyway, draw the arrays.
     {
-        const offset = 0;
-        const vertexCount = 4;
-        gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+        // NOTE: this assumes we're drawing a cube, and isn't generalized
+        // for any size of mesh. also assumes small mesh.
+        gl.drawElements(
+            gl.TRIANGLES,
+            36,
+            gl.UNSIGNED_SHORT,
+            0);
     }
 
 }
